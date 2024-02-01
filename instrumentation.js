@@ -1,4 +1,5 @@
 const opentelemetry = require('@opentelemetry/sdk-node');
+const { diag, DiagConsoleLogger, DiagLogLevel } = require('@opentelemetry/api');
 const { NodeTracerProvider, SimpleSpanProcessor } = require('@opentelemetry/sdk-trace-node');
 const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
 const { Resource } = require('@opentelemetry/resources');
@@ -7,6 +8,8 @@ const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-proto'
 const { OTLPMetricExporter } = require('@opentelemetry/exporter-metrics-otlp-proto');
 const { PeriodicExportingMetricReader } = require('@opentelemetry/sdk-metrics');
 
+diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
+
 const provider = new NodeTracerProvider({
     resource: new Resource({
         [SemanticResourceAttributes.SERVICE_NAME]: 'capsule-corp',
@@ -14,17 +17,11 @@ const provider = new NodeTracerProvider({
 })
 
 const traceExporterOptions = {
-    url: 'https://otlp.nr-data.net',
-    headers: {
-        'api-key': '6c30225764e4cafdee2e830bf52a5780FFFFNRAL',
-    }
+    url: 'localhost:55681/v1/traces',
 };
 
 const metricExporterOptions = {
-    url: 'https://otlp.nr-data.net',
-    headers: {
-        'api-key': '6c30225764e4cafdee2e830bf52a5780FFFFNRAL',
-    },
+    url: 'localhost:55681/v1/metrics',
     concurrencyLimit: 1,
 };
 const traceExporter = new OTLPTraceExporter(traceExporterOptions);

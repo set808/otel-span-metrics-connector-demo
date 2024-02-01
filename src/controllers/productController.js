@@ -40,6 +40,25 @@ const getAllProducts = (req, res) => {
     res.json(products);
 };
 
+const getProductById = (req, res) => {
+    const { id } = req.params;
+    const product = products.find(p => p.id === id);
+    if (!product) {
+      return res.status(404).send('Product not found');
+    }
+    res.json(product);
+};
+
+const searchProducts = (req, res) => {
+    const { query } = req.query;
+    const filteredProducts = products.filter(p => p.name.includes(query) || p.description.includes(query));
+    res.json(filteredProducts);
+  };
+  
+  
+
 module.exports = {
-    getAllProducts
+    getAllProducts,
+    getProductById,
+    searchProducts,
 };

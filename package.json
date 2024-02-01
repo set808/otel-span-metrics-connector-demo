@@ -1,13 +1,16 @@
 {
   "name": "capsule-corp-demo",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Example of using opentelemetry metric-span-connector in Node.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:instrumentation": "node -r ./instrumentation.js ./server.js",
+    "docker:start": "cd ./docker && docker-compose down && docker-compose up",
+    "docker:startd": "cd ./docker && docker-compose down && docker-compose up -d",
+    "docker:stop": "cd ./docker && docker-compose down"
   },
   "keywords": [],
-  "author": "",
+  "author": "Spencer Taylor",
   "license": "ISC",
   "dependencies": {
     "@opentelemetry/api": "^1.7.0",
