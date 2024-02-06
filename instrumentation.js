@@ -5,8 +5,6 @@ const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumenta
 const { Resource } = require('@opentelemetry/resources');
 const { SemanticResourceAttributes } = require('@opentelemetry/semantic-conventions');
 const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-proto');
-const { OTLPMetricExporter } = require('@opentelemetry/exporter-metrics-otlp-proto');
-const { PeriodicExportingMetricReader } = require('@opentelemetry/sdk-metrics');
 
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
 
@@ -16,24 +14,28 @@ const provider = new NodeTracerProvider({
     })
 })
 
-const traceExporterOptions = {
-    url: 'localhost:55681/v1/traces',
-};
 
-const metricExporterOptions = {
-    url: 'localhost:55681/v1/metrics',
-    concurrencyLimit: 1,
-};
-const traceExporter = new OTLPTraceExporter(traceExporterOptions);
+const traceExporter = new OTLPTraceExporter();
 
 const sdk = new opentelemetry.NodeSDK({
+    serviceName: 'capsule-corp',
     traceExporter: traceExporter,
-    metricReader: new PeriodicExportingMetricReader({
-        exporter: new OTLPMetricExporter(metricExporterOptions),
-    }),
     instrumentations: [getNodeAutoInstrumentations()],
 });
+
+
 provider.addSpanProcessor(new SimpleSpanProcessor(traceExporter));
 provider.register();
 
 sdk.start()
+
+const process = require("process");
+process.on("SIGTERM", () => {
+  sdk
+    .shutdown()
+    .then(
+      () => console.log("SDK shut down successfully"),
+      (err) => console.log("Error shutting down SDK", err)
+    )
+    .finally(() => process.exit(0));
+});

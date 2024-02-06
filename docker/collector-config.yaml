@@ -4,33 +4,17 @@ receivers:
       grpc:
         endpoint: 0.0.0.0:4317
       http:
-        endpoint: 0.0.0.0:55681
+        endpoint: 0.0.0.0:4318
+
 exporters:
   otlphttp:
-    endpoint: https://otlp.nr-data.net
+    endpoint: https://otlp.nr-data.net:4318
     headers:
       api-key: ${NEW_RELIC_API_KEY}
 connectors:
   spanmetrics:
     histogram:
       explicit:
-        buckets: [100us, 1ms, 2ms, 6ms, 10ms, 100ms, 250ms]
-    dimensions:
-      - name: http.method
-        default: GET
-      - name: http.status_code
-    dimensions_cache_size: 1000
-    aggregation_temporality: "AGGREGATION_TEMPORALITY_CUMULATIVE"
-    metrics_flush_interval: 15s
-    events:
-      enabled: true
-      dimensions:
-        - name: exception.type
-        - name: exception.message
-    resource_metrics_key_attributes:
-      - service.name
-      - telemetry.sdk.language
-      - telemetry.sdk.name
 service:
   pipelines:
     traces:
