@@ -15,6 +15,11 @@ connectors:
   spanmetrics:
     histogram:
       explicit:
+    dimensions: 
+      - name: http.method
+        default: "GET"
+      - name: http.status_code
+      
 service:
   pipelines:
     traces:
