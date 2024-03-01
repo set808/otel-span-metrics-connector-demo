@@ -10,7 +10,7 @@ exporters:
   otlphttp:
     endpoint: https://otlp.nr-data.net:4318
     headers:
-      api-key: 359516983ecc7f8ccff2913699fca09b272eNRAL
+      api-key: NEW_RELIC_API_KEY
 connectors:
   spanmetrics:
     histogram:
