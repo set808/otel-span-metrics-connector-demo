@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start:instrumentation": "node -r ./instrumentation.js ./server.js",
-    "docker:start": "cd ./docker && docker-compose down && docker-compose up",
+    "docker:start": "cd ./docker && docker-compose down && docker-compose -f docker-compose.yaml up",
+    "docker:startHead": "cd ./docker && docker-compose down && docker-compose -f docker-compose-head.yaml up",
+    "docker:startTail": "cd ./docker && docker-compose down && docker-compose -f docker-compose-tail.yaml up",
     "docker:startd": "cd ./docker && docker-compose down && docker-compose up -d",
     "docker:stop": "cd ./docker && docker-compose down"
   },

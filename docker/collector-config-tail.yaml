@@ -1,17 +1,15 @@
 receivers:
   otlp:
     protocols:
-      grpc:
-        endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
-
 exporters:
   otlphttp:
     endpoint: https://otlp.nr-data.net:4318
     headers:
       api-key: 359516983ecc7f8ccff2913699fca09b272eNRAL
 connectors:
+  forward:
   spanmetrics:
     histogram:
       explicit:
@@ -19,12 +17,30 @@ connectors:
       - name: http.method
         default: "GET"
       - name: http.status_code
+processors:
+  tail_sampling:
+    decision_wait: 10s
+    num_traces: 100
+    expected_new_traces_per_sec: 10
+    policies:
+      [
+        {
+          name: "error-status-code",
+          type: status_code,
+          status_code: {status_codes: [ERROR]}
+        }
+      ]
+
       
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [spanmetrics]
+      exporters: [spanmetrics, forward]
+    traces/sampling:
+      receivers: [forward]
+      processors: [tail_sampling]
+      exporters: [otlphttp]
     metrics:
       receivers: [spanmetrics]
       exporters: [otlphttp]
